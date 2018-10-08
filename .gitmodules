@@ -1,0 +1,6 @@
+[submodule "packages/reactivecore"]
+	path = packages/reactivecore
+	url = git@github.com:appbaseio/reactivecore.git
+[submodule "packages/vue-playground"]
+	path = packages/vue-playground
+	url = git@github.com:appbaseio/vue-playground.git

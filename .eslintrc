@@ -1,0 +1,22 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "node": true
+  },
+  "extends": ["airbnb-base", "plugin:vue/recommended"],
+  "parserOptions": {
+    "parser": "babel-eslint",
+    "ecmaVersion": 2017,
+    "sourceType": "module"
+  },
+  "rules": {
+    "indent": [2, "tab", { "SwitchCase": 1, "VariableDeclarator": 1 }],
+    "no-tabs": 0,
+    "no-underscore-dangle": 0,
+    "operator-linebreak": ["error", "before"],
+    "prefer-destructuring": 0,
+    "no-console": ["error", { "allow": ["warn", "error"] }],
+    "class-methods-use-this": 0
+  }
+}

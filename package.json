@@ -1,0 +1,32 @@
+{
+  "private": true,
+  "name": "vue-reactivesearch-packages",
+  "scripts": {
+    "dev:web": "concurrently --kill-others -n \"CORE\",\"WEB\", -c \"cyan\",\"yellow\",\"green\", \"npm start --prefix packages/reactivecore\" \"npm run watch --prefix packages/web\"",
+    "lint": "eslint .",
+    "lint:ts": "tslint -c tslint.json 'packages/web/**/**/*.{ts,tsx}'",
+    "lint:ts-fix": "tslint -c tslint.json --fix 'packages/web/**/**/*.{ts,tsx}'",
+    "precommit": "lint-staged"
+  },
+  "author": "Kuldeep Saxena <kuldepsaxena155@gmail.com>",
+  "license": "Apache-2.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "lint-staged": {
+    "*.js": [
+      "eslint"
+    ]
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.1",
+    "concurrently": "^3.5.1",
+    "eslint": "^5.6.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-vue": "^4.7.1",
+    "husky": "^0.14.3",
+    "lint-staged": "^7.0.0",
+    "vue-eslint-parser": "^3.2.2"
+  }
+}
