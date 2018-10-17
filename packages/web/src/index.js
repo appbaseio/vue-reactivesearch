@@ -1,17 +1,25 @@
-import Vue from 'vue';
-import FlockBanner from './components/Banner.vue';
+import ReactiveList from './components/result/ReactiveList.jsx';
+import ReactiveBase from './components/ReactiveBase/index.jsx';
+import version from './components/Version/index';
 
-const Components = {
-	FlockBanner,
+const components = [ReactiveList, ReactiveBase];
+
+const install = function (Vue) {
+  components.map((component) => {
+    Vue.use(component);
+    return null;
+  });
 };
-// Register components
-Object.keys(Components).forEach((name) => {
-	Vue.component(
-		name,
-		Components[
-			name
-		],
-	);
-});
 
-export { FlockBanner };
+if (typeof window !== 'undefined' && window.Vue) {
+  install(window.Vue);
+}
+
+export {
+ version, install, ReactiveList, ReactiveBase,
+};
+
+export default {
+  version,
+  install,
+};

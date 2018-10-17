@@ -11,12 +11,10 @@
     "sourceType": "module"
   },
   "rules": {
-    "indent": [2, "tab", { "SwitchCase": 1, "VariableDeclarator": 1 }],
+    "indent": 0,
     "no-tabs": 0,
+    "eol-last": ["error", "always"],
     "no-underscore-dangle": 0,
-    "operator-linebreak": ["error", "before"],
-    "prefer-destructuring": 0,
-    "no-console": ["error", { "allow": ["warn", "error"] }],
-    "class-methods-use-this": 0
+    "func-names": [0]
   }
 }
