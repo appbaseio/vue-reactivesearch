@@ -102,9 +102,9 @@ const URLParamsProvider = {
 
     setURL(component, value) {
       if (
-        !value
-        || (typeof value === 'string' && value.trim() === '')
-        || (Array.isArray(value) && value.length === 0)
+        !value ||
+        (typeof value === 'string' && value.trim() === '') ||
+        (Array.isArray(value) && value.length === 0)
       ) {
         this.$props.params.delete(component);
         this.pushToHistory();

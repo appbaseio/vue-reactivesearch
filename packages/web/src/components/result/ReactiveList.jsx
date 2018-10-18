@@ -563,12 +563,12 @@ const mapDispatchtoProps = {
   updateQuery,
   watchComponent,
 };
-const RlConnected = connect(
+const RLConnected = connect(
   mapStateToProps,
   mapDispatchtoProps,
 )(ReactiveList);
 
 ReactiveList.install = function (Vue) {
-  Vue.component(ReactiveList.name, RlConnected);
+  Vue.component(ReactiveList.name, RLConnected);
 };
 export default ReactiveList;
