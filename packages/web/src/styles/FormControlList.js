@@ -147,11 +147,6 @@ const Radio = styled('input')`
 	}
 `;
 
-Radio.defaultProps = {
-  type: 'radio',
-  show: true,
-};
-
 const Checkbox = styled('input')`
   ${formItem};
   ${props => (props.show ? null : hideInputControl)};
@@ -193,11 +188,6 @@ const Checkbox = styled('input')`
     }
   }
 `;
-
-Checkbox.defaultProps = {
-  type: 'checkbox',
-  show: true,
-};
 
 const UL = styled('ul')`
 	list-style: none;

@@ -4,7 +4,7 @@ import Title from '../../styles/Title';
 import Input from '../../styles/Input';
 import Container from '../../styles/Container';
 import { connect } from '../../utils/index';
-import { UL, Radio } from '../../styles/FormControlList';
+import { UL, Checkbox } from '../../styles/FormControlList';
 
 const {
   addComponent,
@@ -15,18 +15,25 @@ const {
   setQueryListener,
 } = Actions;
 const {
- getQueryOptions, pushToAndClause, checkValueChange, getAggsOrder, getClassName,
+  isEqual,
+  getQueryOptions,
+  pushToAndClause,
+  checkValueChange,
+  getAggsOrder,
+  getClassName,
 } = helper;
 
-const List = {
-  name: 'List',
+const MultiList = {
+  name: 'MultiList',
   props: {
+    defaultSelected: types.stringArray,
+    queryFormat: VueTypes.oneOf(['and', 'or']).def('or'),
+    showCheckbox: VueTypes.bool.def(true),
     beforeValueChange: types.func,
     className: types.string.def(''),
     componentId: types.stringRequired,
     customQuery: types.func,
     dataField: types.stringRequired,
-    defaultSelected: types.string,
     filterLabel: types.string,
     innerClass: types.style,
     onQueryChange: types.func,
@@ -38,7 +45,6 @@ const List = {
     selectAllLabel: types.string,
     showCount: VueTypes.bool.def(true),
     showFilter: VueTypes.bool.def(true),
-    showRadio: VueTypes.bool.def(true),
     showSearch: VueTypes.bool.def(true),
     size: VueTypes.number.def(100),
     sortBy: VueTypes.oneOf(['asc', 'desc', 'count']).def('count'),
@@ -50,7 +56,7 @@ const List = {
   data() {
     const props = this.$props;
     this.__state = {
-      currentValue: '',
+      currentValue: {},
       modifiedOptions:
         props.options && props.options[props.dataField]
           ? props.options[props.dataField].buckets
@@ -76,7 +82,6 @@ const List = {
       this.setValue(this.$props.defaultSelected);
     }
   },
-
   beforeDestroy() {
     this.removeComponent(this.$props.componentId);
     this.removeComponent(this.internalComponent);
@@ -100,18 +105,28 @@ const List = {
       this.updateQueryHandlerOptions(this.$props);
       this.updateQueryHandler(this.$data.currentValue, this.$props);
     },
-    defaultSelected(newVal) {
-      this.setValue(newVal);
+    defaultSelected(newVal, oldVal) {
+      if (!isEqual(oldVal, newVal)) {
+        this.setValue(newVal, true);
+      }
     },
     selectedValue(newVal) {
-      if (this.$data.currentValue !== newVal) {
-        this.setValue(newVal || '');
+      let selectedValue = Object.keys(this.$data.currentValue);
+
+      if (this.$props.selectAllLabel) {
+        selectedValue = selectedValue.filter(val => val !== this.$props.selectAllLabel);
+
+        if (this.$data.currentValue[this.$props.selectAllLabel]) {
+          selectedValue = [this.$props.selectAllLabel];
+        }
+      }
+      if (!isEqual(selectedValue, newVal)) {
+        this.setValue(newVal || [], true);
       }
     },
   },
   render() {
     const { selectAllLabel, renderListItem } = this.$props;
-
     if (this.modifiedOptions.length === 0) {
       return null;
     }
@@ -121,32 +136,31 @@ const List = {
     if (this.$props.transformData) {
       itemsToRender = this.$props.transformData(itemsToRender);
     }
+
     return (
       <Container class={this.$props.className}>
         {this.$props.title && (
-          <Title class={getClassName(this.$props.innerClass, 'title') || ''}>
-            {this.$props.title}
-          </Title>
+          <Title class={getClassName(this.$props.innerClass, 'title')}>{this.$props.title}</Title>
         )}
         {this.renderSearch()}
-        <UL class={getClassName(this.$props.innerClass, 'list') || ''}>
+        <UL class={getClassName(this.$props.innerClass, 'list')}>
           {selectAllLabel ? (
             <li
               key={selectAllLabel}
-              class={`${this.$data.currentValue === selectAllLabel ? 'active' : ''}`}
+              class={`${this.$data.currentValue[selectAllLabel] ? 'active' : ''}`}
             >
-              <Radio
-                class={getClassName(this.$props.innerClass, 'radio')}
+              <Checkbox
+                type="checkbox"
+                class={getClassName(this.$props.innerClass, 'checkbox')}
                 id={`${this.$props.componentId}-${selectAllLabel}`}
-                name={this.$props.componentId}
+                name={selectAllLabel}
                 value={selectAllLabel}
                 onClick={this.handleClick}
-                readOnly
-                checked={this.$data.currentValue === selectAllLabel}
-                show={this.$props.showRadio}
+                checked={!!this.$data.currentValue[selectAllLabel]}
+                show={this.$props.showCheckbox}
               />
               <label
-                class={getClassName(this.$props.innerClass, 'label') || null}
+                class={getClassName(this.$props.innerClass, 'label')}
                 for={`${this.$props.componentId}-${selectAllLabel}`}
               >
                 {selectAllLabel}
@@ -168,23 +182,19 @@ const List = {
               return false;
             })
             .map(item => (
-              <li
-                key={item.key}
-                class={`${this.$data.currentValue === String(item.key) ? 'active' : ''}`}
-              >
-                <Radio
-                  class={getClassName(this.$props.innerClass, 'radio')}
+              <li key={item.key} class={`${this.$data.currentValue[item.key] ? 'active' : ''}`}>
+                <Checkbox
+                  type="checkbox"
+                  class={getClassName(this.$props.innerClass, 'checkbox')}
                   id={`${this.$props.componentId}-${item.key}`}
                   name={this.$props.componentId}
                   value={item.key}
-                  readOnly
                   onClick={this.handleClick}
-                  type="radio"
-                  checked={this.$data.currentValue === String(item.key)}
-                  show={this.$props.showRadio}
+                  checked={!!this.$data.currentValue[item.key]}
+                  show={this.$props.showCheckbox}
                 />
                 <label
-                  class={getClassName(this.$props.innerClass, 'label') || null}
+                  class={getClassName(this.$props.innerClass, 'label')}
                   for={`${this.$props.componentId}-${item.key}`}
                 >
                   {renderListItem ? (
@@ -193,7 +203,7 @@ const List = {
                     <span>
                       {item.key}
                       {this.$props.showCount && (
-                        <span class={getClassName(this.$props.innerClass, 'count') || null}>
+                        <span class={getClassName(this.$props.innerClass, 'count')}>
                           &nbsp;({item.doc_count})
                         </span>
                       )}
@@ -220,32 +230,77 @@ const List = {
         });
       }
     },
-
-    setValue(nextValue, props = this.$props) {
+    setValue(value, isDefaultValue = false, props = this.$props) {
       // ignore state updates when component is locked
       if (props.beforeValueChange && this.locked) {
         return;
       }
 
       this.locked = true;
-      let value = nextValue;
+      const { selectAllLabel } = this.$props;
+      let { currentValue } = this.$data;
+      let finalValues = null;
+      if (
+        selectAllLabel &&
+        ((Array.isArray(value) && value.includes(selectAllLabel)) ||
+          (typeof value === 'string' && value === selectAllLabel))
+      ) {
+        if (currentValue[selectAllLabel]) {
+          currentValue = {};
+          finalValues = [];
+        } else {
+          this.$data.modifiedOptions.forEach((item) => {
+            currentValue[item.key] = true;
+          });
+          currentValue[selectAllLabel] = true;
+          finalValues = [selectAllLabel];
+        }
+      } else if (isDefaultValue) {
+        finalValues = value;
+        currentValue = {};
 
-      if (nextValue === this.$data.currentValue) {
-        value = '';
+        if (value) {
+          value.forEach((item) => {
+            currentValue[item] = true;
+          });
+        }
+
+        if (selectAllLabel && selectAllLabel in currentValue) {
+          const { [selectAllLabel]: del, ...obj } = currentValue;
+          currentValue = {
+            ...obj,
+          };
+        }
+      } else {
+        if (currentValue[value]) {
+          const { [value]: del, ...rest } = currentValue;
+          currentValue = {
+            ...rest,
+          };
+        } else {
+          currentValue[value] = true;
+        }
+        if (selectAllLabel && selectAllLabel in currentValue) {
+          const { [selectAllLabel]: del, ...obj } = currentValue;
+          currentValue = {
+            ...obj,
+          };
+        }
+
+        finalValues = Object.keys(currentValue);
       }
 
       const performUpdate = () => {
-        this.currentValue = value;
-        this.updateQueryHandler(value, props);
+        this.currentValue = Object.assign({}, currentValue);
+        this.updateQueryHandler(finalValues, props);
         this.locked = false;
-        if (props.onValueChange) props.onValueChange(value);
+        if (props.onValueChange) props.onValueChange(finalValues);
       };
-
-      checkValueChange(props.componentId, value, props.beforeValueChange, performUpdate);
+      checkValueChange(props.componentId, finalValues, props.beforeValueChange, performUpdate);
     },
 
     updateQueryHandler(value, props) {
-      const query = props.customQuery || List.defaultQuery;
+      const query = props.customQuery || MultiList.defaultQuery;
       this.updateQuery({
         componentId: props.componentId,
         query: query(value, props),
@@ -253,7 +308,7 @@ const List = {
         label: props.filterLabel,
         showFilter: props.showFilter,
         URLParams: props.URLParams,
-        componentType: 'SINGLELIST',
+        componentType: 'MULTILIST',
       });
     },
 
@@ -278,7 +333,7 @@ const List = {
     },
 
     updateQueryHandlerOptions(props) {
-      const queryOptions = List.generateQueryOptions(props);
+      const queryOptions = MultiList.generateQueryOptions(props);
       this.setQueryOptions(this.internalComponent, queryOptions);
     },
 
@@ -292,7 +347,7 @@ const List = {
         return (
           <Input
             class={getClassName(this.$props.innerClass, 'input') || ''}
-            onChange={this.handleInputChange}
+            onInput={this.handleInputChange}
             value={this.$data.searchTerm}
             placeholder={this.$props.placeholder}
             style={{
@@ -311,8 +366,76 @@ const List = {
     },
   },
 };
+MultiList.defaultQuery = (value, props) => {
+  let query = null;
+  const type = props.queryFormat === 'or' ? 'terms' : 'term';
 
-List.generateQueryOptions = (props) => {
+  if (!Array.isArray(value) || value.length === 0) {
+    return null;
+  }
+
+  if (props.selectAllLabel && value.includes(props.selectAllLabel)) {
+    if (props.showMissing) {
+      query = { match_all: {} };
+    } else {
+      query = {
+        exists: {
+          field: props.dataField,
+        },
+      };
+    }
+  } else if (value) {
+    let listQuery;
+    if (props.queryFormat === 'or') {
+      if (props.showMissing) {
+        const hasMissingTerm = value.includes(props.missingLabel);
+        let should = [
+          {
+            [type]: {
+              [props.dataField]: value.filter(item => item !== props.missingLabel),
+            },
+          },
+        ];
+        if (hasMissingTerm) {
+          should = should.concat({
+            bool: {
+              must_not: {
+                exists: { field: props.dataField },
+              },
+            },
+          });
+        }
+        listQuery = {
+          bool: {
+            should,
+          },
+        };
+      } else {
+        listQuery = {
+          [type]: {
+            [props.dataField]: value,
+          },
+        };
+      }
+    } else {
+      // adds a sub-query with must as an array of objects for each term/value
+      const queryArray = value.map(item => ({
+        [type]: {
+          [props.dataField]: item,
+        },
+      }));
+      listQuery = {
+        bool: {
+          must: queryArray,
+        },
+      };
+    }
+
+    query = value.length ? listQuery : null;
+  }
+  return query;
+};
+MultiList.generateQueryOptions = (props) => {
   const queryOptions = getQueryOptions(props);
   queryOptions.size = 0;
   queryOptions.aggs = {
@@ -325,41 +448,14 @@ List.generateQueryOptions = (props) => {
       },
     },
   };
+
   return queryOptions;
-};
-List.defaultQuery = (value, props) => {
-  if (props.selectAllLabel && props.selectAllLabel === value) {
-    if (props.showMissing) {
-      return { match_all: {} };
-    }
-    return {
-      exists: {
-        field: props.dataField,
-      },
-    };
-  } else if (value) {
-    if (props.showMissing && props.missingLabel === value) {
-      return {
-        bool: {
-          must_not: {
-            exists: { field: props.dataField },
-          },
-        },
-      };
-    }
-    return {
-      term: {
-        [props.dataField]: value,
-      },
-    };
-  }
-  return null;
 };
 const mapStateToProps = (state, props) => ({
   options: state.aggregations[props.componentId],
   selectedValue:
     (state.selectedValues[props.componentId] && state.selectedValues[props.componentId].value) ||
-    '',
+    null,
   themePreset: state.config.themePreset,
 });
 
@@ -375,9 +471,9 @@ const mapDispatchtoProps = {
 const ListConnected = connect(
   mapStateToProps,
   mapDispatchtoProps,
-)(List);
+)(MultiList);
 
-List.install = function (Vue) {
-  Vue.component(List.name, ListConnected);
+MultiList.install = function (Vue) {
+  Vue.component(MultiList.name, ListConnected);
 };
-export default List;
+export default MultiList;
