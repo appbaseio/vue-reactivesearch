@@ -29,8 +29,6 @@ const SingleList = {
     defaultSelected: types.string,
     filterLabel: types.string,
     innerClass: types.style,
-    onQueryChange: types.func,
-    onValueChange: types.func,
     placeholder: VueTypes.string.def('Search'),
     react: types.react,
     renderListItem: types.func,
@@ -62,7 +60,10 @@ const SingleList = {
     return this.__state;
   },
   created() {
-    this.setQueryListener(this.$props.componentId, this.$props.onQueryChange, null);
+    const onQueryChange = (...args) => {
+      this.$emit('queryChange', ...args);
+    };
+    this.setQueryListener(this.$props.componentId, onQueryChange, null);
   },
   beforeMount() {
     this.addComponent(this.internalComponent);
@@ -111,7 +112,7 @@ const SingleList = {
   },
   render() {
     const { selectAllLabel, renderListItem } = this.$props;
-
+    const renderListItemCalc = this.$scopedSlots.renderListItem || renderListItem;
     if (this.modifiedOptions.length === 0) {
       return null;
     }
@@ -187,8 +188,8 @@ const SingleList = {
                   class={getClassName(this.$props.innerClass, 'label') || null}
                   for={`${this.$props.componentId}-${item.key}`}
                 >
-                  {renderListItem ? (
-                    renderListItem(item.key, item.doc_count)
+                  {renderListItemCalc ? (
+                    renderListItemCalc(item.key, item.doc_count)
                   ) : (
                     <span>
                       {item.key}
@@ -238,7 +239,7 @@ const SingleList = {
         this.currentValue = value;
         this.updateQueryHandler(value, props);
         this.locked = false;
-        if (props.onValueChange) props.onValueChange(value);
+        this.$emit('valueChange', value);
       };
 
       checkValueChange(props.componentId, value, props.beforeValueChange, performUpdate);
@@ -337,7 +338,8 @@ SingleList.defaultQuery = (value, props) => {
         field: props.dataField,
       },
     };
-  } else if (value) {
+  }
+  if (value) {
     if (props.showMissing && props.missingLabel === value) {
       return {
         bool: {

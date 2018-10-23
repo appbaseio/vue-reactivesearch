@@ -36,8 +36,6 @@ const MultiList = {
     dataField: types.stringRequired,
     filterLabel: types.string,
     innerClass: types.style,
-    onQueryChange: types.func,
-    onValueChange: types.func,
     placeholder: VueTypes.string.def('Search'),
     react: types.react,
     renderListItem: types.func,
@@ -68,7 +66,10 @@ const MultiList = {
     return this.__state;
   },
   created() {
-    this.setQueryListener(this.$props.componentId, this.$props.onQueryChange, null);
+    const onQueryChange = (...args) => {
+      this.$emit('queryChange', ...args);
+    };
+    this.setQueryListener(this.$props.componentId, onQueryChange, null);
   },
   beforeMount() {
     this.addComponent(this.internalComponent);
@@ -127,6 +128,7 @@ const MultiList = {
   },
   render() {
     const { selectAllLabel, renderListItem } = this.$props;
+    const renderListItemCalc = this.$scopedSlots.renderListItem || renderListItem;
     if (this.modifiedOptions.length === 0) {
       return null;
     }
@@ -197,8 +199,8 @@ const MultiList = {
                   class={getClassName(this.$props.innerClass, 'label')}
                   for={`${this.$props.componentId}-${item.key}`}
                 >
-                  {renderListItem ? (
-                    renderListItem(item.key, item.doc_count)
+                  {renderListItemCalc ? (
+                    renderListItemCalc(item.key, item.doc_count)
                   ) : (
                     <span>
                       {item.key}
@@ -241,9 +243,9 @@ const MultiList = {
       let { currentValue } = this.$data;
       let finalValues = null;
       if (
-        selectAllLabel &&
-        ((Array.isArray(value) && value.includes(selectAllLabel)) ||
-          (typeof value === 'string' && value === selectAllLabel))
+        selectAllLabel
+        && ((Array.isArray(value) && value.includes(selectAllLabel))
+          || (typeof value === 'string' && value === selectAllLabel))
       ) {
         if (currentValue[selectAllLabel]) {
           currentValue = {};
@@ -294,7 +296,7 @@ const MultiList = {
         this.currentValue = Object.assign({}, currentValue);
         this.updateQueryHandler(finalValues, props);
         this.locked = false;
-        if (props.onValueChange) props.onValueChange(finalValues);
+        this.$emit('valueChange', finalValues);
       };
       checkValueChange(props.componentId, finalValues, props.beforeValueChange, performUpdate);
     },
@@ -454,8 +456,8 @@ MultiList.generateQueryOptions = (props) => {
 const mapStateToProps = (state, props) => ({
   options: state.aggregations[props.componentId],
   selectedValue:
-    (state.selectedValues[props.componentId] && state.selectedValues[props.componentId].value) ||
-    null,
+    (state.selectedValues[props.componentId] && state.selectedValues[props.componentId].value)
+    || null,
   themePreset: state.config.themePreset,
 });
 

@@ -44,11 +44,15 @@ const ReactiveList = {
   created() {
     this.isLoading = true;
     this.internalComponent = `${this.$props.componentId}__internal`;
-    this.setQueryListener(this.$props.componentId, this.$props.onQueryChange, this.$props.onError);
+    const onQueryChange = (...args) => {
+      this.$emit('queryChange', ...args);
+    };
+    const onError = (...args) => {
+      this.$emit('error', ...args);
+    };
+    this.setQueryListener(this.$props.componentId, onQueryChange, onError);
   },
   props: {
-    onQueryChange: types.func,
-    onError: types.func,
     currentPage: VueTypes.number.def(0),
     includeFields: types.includeFields.def(['*']),
     // component props
@@ -63,9 +67,6 @@ const ReactiveList = {
     onAllData: types.func,
     onData: types.func,
     onNoResults: VueTypes.string.def('No Results found.'),
-    onPageChange: types.func,
-    onPageClick: types.func,
-    onResultStats: types.func,
     pages: VueTypes.number.def(5),
     pagination: VueTypes.bool.def(false),
     paginationAt: types.paginationAt.def('bottom'),
@@ -79,7 +80,13 @@ const ReactiveList = {
   },
   computed: {
     totalPages() {
-      return Math.ceil(this.$props.total / this.$props.size) || 0;
+      return Math.ceil(this.total / this.$props.size) || 0;
+    },
+    hasPageChangeListener() {
+        return this.$listeners && this.$listeners.pageChange;
+    },
+    hasResultStatsListener() {
+      return this.$listeners && this.$listeners.resultStats;
     },
   },
   watch: {
@@ -151,8 +158,8 @@ const ReactiveList = {
       if (this.$props.pagination) {
         // called when page is changed
         if (this.isLoading && (oldVal || newVal)) {
-          if (this.$props.onPageChange) {
-            this.$props.onPageChange(this.$currentPage + 1, this.totalPages);
+          if (this.hasPageChangeListener) {
+            this.$emit('pageChange', this.$currentPage + 1, this.totalPages);
           } else {
             window.scrollTo(0, 0);
           }
@@ -168,7 +175,7 @@ const ReactiveList = {
             this.from = 0;
           }
         }
-      } else if ((!oldVal || !oldVal.length) && newVal.hits) {
+      } else if ((!oldVal || !oldVal.length) && newVal) {
         this.isLoading = false;
       }
     },
@@ -176,10 +183,7 @@ const ReactiveList = {
       if (this.$props.pagination && newVal !== oldVal) {
         const currentPage = this.$data.total ? 0 : this.$currentPage;
         this.$currentPage = currentPage;
-
-        if (this.$props.onPageChange) {
-          this.$props.onPageChange(currentPage + 1, this.totalPages);
-        }
+        this.$emit('pageChange', currentPage + 1, this.totalPages);
       }
     },
     currentPage(newVal, oldVal) {
@@ -294,8 +298,6 @@ const ReactiveList = {
     return (
       <div style={this.$props.style} class={this.$props.className}>
         {this.isLoading && this.$props.pagination && this.$props.loader}
-        <slot />
-        <slot name="onDataTest" />
         <Flex
           labelPosition={this.$props.sortOptions ? 'right' : 'left'}
           class={getClassName(this.$props.innerClass, 'resultsInfo')}
@@ -310,7 +312,7 @@ const ReactiveList = {
         && (this.$props.paginationAt === 'top' || this.$props.paginationAt === 'both') ? (
           <Pagination
             pages={this.$props.pages}
-            totalPages={Math.ceil(this.$data.total / this.$props.size)}
+            totalPages={this.totalPages}
             currentPage={this.$currentPage}
             setPage={this.setPage}
             innerClass={this.$props.innerClass}
@@ -434,13 +436,9 @@ const ReactiveList = {
       }
     },
     setPage(page) {
-      // onPageClick will be called everytime a pagination button is clicked
+      // pageClick will be called everytime a pagination button is clicked
       if (page !== this.$currentPage) {
-        const { onPageClick } = this.$props;
-        if (onPageClick) {
-          this.$emit('pageClick', page + 1);
-        }
-
+        this.$emit('pageClick', page + 1);
         const value = this.$props.size * page;
         const options = getQueryOptions(this.$props);
         options.from = this.$data.from;
@@ -463,7 +461,7 @@ const ReactiveList = {
     },
 
     renderResultStats() {
-      if (this.$props.onResultStats && this.$data.total) {
+      if (this.hasResultStatsListener && this.$data.total) {
         return this.$emit('resultStats', this.$data.total, this.$data.time);
       }
       if (this.$data.total) {
@@ -545,7 +543,6 @@ const mapStateToProps = (state, props) => ({
       && state.selectedValues[props.componentId].value - 1)
     || -1,
   hits: state.hits[props.componentId] && state.hits[props.componentId].hits,
-  isLoading: state.isLoading[props.componentId] || false,
   streamHits: state.streamHits[props.componentId],
   time: (state.hits[props.componentId] && state.hits[props.componentId].time) || 0,
   total: state.hits[props.componentId] && state.hits[props.componentId].total,

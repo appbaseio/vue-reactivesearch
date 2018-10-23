@@ -56,7 +56,7 @@ const DataSearch = {
     options: types.options,
     autoFocus: types.bool,
     autosuggest: VueTypes.bool.def(false),
-    beforeValueChange: types.func,
+    beforeValueChange: types.func, // add event handler
     className: VueTypes.string.def(''),
     clearIcon: types.children,
     componentId: types.stringRequired,
@@ -78,15 +78,15 @@ const DataSearch = {
     ]).def('left'),
     innerClass: types.style,
     innerRef: types.func,
-    onBlur: types.func,
-    onFocus: types.func,
-    onKeyDown: types.func,
-    onKeyPress: types.func,
-    onKeyUp: types.func,
-    onQueryChange: types.func,
-    onSuggestion: types.func,
-    onValueChange: types.func,
-    onValueSelected: types.func,
+    onBlur: types.func, // add event handler
+    onFocus: types.func, // add event handler
+    onKeyDown: types.func, // add event handler
+    onKeyPress: types.func, // add event handler
+    onKeyUp: types.func, // add event handler
+    onQueryChange: types.func, // add event handler
+    onSuggestion: types.func, // add event handler
+    onValueChange: types.func, // add event handler
+    onValueSelected: types.func, // add event handler
     placeholder: VueTypes.string.def('Search'),
     queryFormat: VueTypes.oneOf([
       'and',

@@ -30,8 +30,6 @@ const SingleRange = {
     defaultSelected: types.string,
     filterLabel: types.string,
     innerClass: types.style,
-    onQueryChange: types.func,
-    onValueChange: types.func,
     react: types.react,
     showFilter: VueTypes.bool.def(true),
     showRadio: VueTypes.bool.def(true),
@@ -39,8 +37,10 @@ const SingleRange = {
     URLParams: VueTypes.bool.def(false),
   },
   created() {
-    const props = this.$props;
-    this.setQueryListener(props.componentId, props.onQueryChange, null);
+    const onQueryChange = (...args) => {
+      this.$emit('queryChange', ...args);
+    };
+    this.setQueryListener(this.$props.componentId, onQueryChange, null);
   },
   beforeMount() {
     this.addComponent(this.$props.componentId);
@@ -81,8 +81,7 @@ const SingleRange = {
         )}
         <UL class={getClassName(this.$props.innerClass, 'list')}>
           {this.$props.data.map((item) => {
-            const selected =
-              !!this.$data.currentValue && this.$data.currentValue.label === item.label;
+            const selected = !!this.$data.currentValue && this.$data.currentValue.label === item.label;
             return (
               <li key={item.label} class={`${selected ? 'active' : ''}`}>
                 <Radio
@@ -129,7 +128,7 @@ const SingleRange = {
         this.currentValue = currentValue;
         this.updateQueryHandler(currentValue, props);
         this.locked = false;
-        if (props.onValueChange) props.onValueChange(currentValue);
+        this.$emit('valueChange', currentValue);
       };
 
       checkValueChange(props.componentId, currentValue, props.beforeValueChange, performUpdate);
@@ -173,8 +172,8 @@ SingleRange.defaultQuery = (value, props) => {
 
 const mapStateToProps = (state, props) => ({
   selectedValue:
-    (state.selectedValues[props.componentId] && state.selectedValues[props.componentId].value) ||
-    null,
+    (state.selectedValues[props.componentId] && state.selectedValues[props.componentId].value)
+    || null,
 });
 
 const mapDispatchtoProps = {
