@@ -14,7 +14,7 @@ Currently the initial setup is a bit manual which we're planning to improve. We 
 
 3. `cd` into the project directory
 
-4. Checkout the `dev` branch (should be default)
+4. Checkout the `master` branch (should be default)
 
 5. Fetch the submodules. In case you don't have `ssh` setup for github, change the URLs in `.gitmodules` to use `https` instead
 
