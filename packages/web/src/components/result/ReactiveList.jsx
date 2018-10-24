@@ -318,19 +318,15 @@ const ReactiveList = {
             innerClass={this.$props.innerClass}
           />
         ) : null}
-        {this.$scopedSlots.onAllData ? (
-          <slot
-            onAllData={{
-              results,
-              streamResults,
-              loadMore: this.loadMore,
-              extra: {
-                base: this.$currentPage * size,
-                triggerClickAnalytics: this.triggerClickAnalytics,
-              },
-            }}
-          />
-        ) : (
+        {this.$scopedSlots.onAllData ? this.$scopedSlots.onAllData({
+            results,
+            streamResults,
+            loadMore: this.loadMore,
+            extra: {
+              base: this.$currentPage * size,
+              triggerClickAnalytics: this.triggerClickAnalytics,
+            },
+          }) : (
           <div class={`${this.$props.listClass} ${getClassName(this.$props.innerClass, 'list')}`}>
             {[...streamResults, ...filteredResults].map((item, index) => this.$scopedSlots.onData({
                 item,

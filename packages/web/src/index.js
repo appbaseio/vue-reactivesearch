@@ -3,10 +3,19 @@ import ReactiveBase from './components/ReactiveBase/index.jsx';
 import DataSearch from './components/search/DataSearch.jsx';
 import SingleList from './components/list/SingleList.jsx';
 import MultiList from './components/list/MultiList.jsx';
+import ReactiveComponent from './components/basic/ReactiveComponent.jsx';
 import SingleRange from './components/range/SingleRange.jsx';
 import version from './components/Version/index';
 
-const components = [ReactiveList, ReactiveBase, DataSearch, SingleList, MultiList, SingleRange];
+const components = [
+  ReactiveList,
+  ReactiveBase,
+  DataSearch,
+  SingleList,
+  MultiList,
+  SingleRange,
+  ReactiveComponent,
+];
 
 const install = function (Vue) {
   components.map((component) => {
@@ -28,6 +37,7 @@ export {
   SingleList,
   MultiList,
   SingleRange,
+  ReactiveComponent,
 };
 
 export default {
