@@ -1,6 +1,6 @@
 {
   "name": "@appbaseio/vue-reactivesearch",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.2",
   "main": "dist/@appbaseio/vue-reactivesearch.cjs.js",
   "jsnext:main": "dist/@appbaseio/vue-reactivesearch.es.js",
   "module": "dist/@appbaseio/vue-reactivesearch.es.js",
@@ -27,7 +27,7 @@
     "prepare": "npm start validate"
   },
   "dependencies": {
-    "@appbaseio/reactivecore": "^5.3.1",
+    "@appbaseio/reactivecore": "^6.0.2",
     "appbase-js": "^4.0.2-beta.2",
     "emotion": "^9.2.12",
     "polished": "^2.2.0",
