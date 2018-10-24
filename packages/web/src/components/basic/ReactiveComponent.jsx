@@ -110,7 +110,7 @@ const ReactiveComponent = {
 
   render() {
     try {
-      const dom = this.$scopedSlots.data;
+      const dom = this.$scopedSlots.default;
       const propsToBePassed = {
         aggregations: this.aggregations,
         hits: this.hits,
