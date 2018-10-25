@@ -1980,16 +1980,16 @@ css-selector-tokenizer@^0.7.0:
     fastparse "^1.1.1"
     regexpu-core "^1.0.0"
 
-css-tree@1.0.0-alpha.28:
-  version "1.0.0-alpha.28"
-  resolved "https://registry.yarnpkg.com/css-tree/-/css-tree-1.0.0-alpha.28.tgz#8e8968190d886c9477bc8d61e96f61af3f7ffa7f"
+css-tree@1.0.0-alpha8:
+  version "1.0.0-alpha8"
+  resolved "https://registry.yarnpkg.com/css-tree/-/css-tree-1.0.0-alpha8.tgz#8e8968190d886c9477bc8d61e96f61af3f7ffa7f"
   dependencies:
     mdn-data "~1.1.0"
     source-map "^0.5.3"
 
-css-tree@1.0.0-alpha.29:
-  version "1.0.0-alpha.29"
-  resolved "https://registry.yarnpkg.com/css-tree/-/css-tree-1.0.0-alpha.29.tgz#3fa9d4ef3142cbd1c301e7664c1f352bd82f5a39"
+css-tree@1.0.0-alpha9:
+  version "1.0.0-alpha9"
+  resolved "https://registry.yarnpkg.com/css-tree/-/css-tree-1.0.0-alpha9.tgz#3fa9d4ef3142cbd1c301e7664c1f352bd82f5a39"
   dependencies:
     mdn-data "~1.1.0"
     source-map "^0.5.3"
@@ -2080,7 +2080,7 @@ csso@^3.5.0:
   version "3.5.1"
   resolved "https://registry.yarnpkg.com/csso/-/csso-3.5.1.tgz#7b9eb8be61628973c1b261e169d2f024008e758b"
   dependencies:
-    css-tree "1.0.0-alpha.29"
+    css-tree "1.0.0-alpha9"
 
 cyclist@~0.2.2:
   version "0.2.2"
@@ -6001,7 +6001,7 @@ svgo@^1.0.0:
     colors "~1.1.2"
     css-select "^2.0.0"
     css-select-base-adapter "~0.1.0"
-    css-tree "1.0.0-alpha.28"
+    css-tree "1.0.0-alpha8"
     css-url-regex "^1.1.0"
     csso "^3.5.0"
     js-yaml "^3.12.0"

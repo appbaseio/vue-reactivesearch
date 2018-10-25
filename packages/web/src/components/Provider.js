@@ -6,7 +6,7 @@ export default {
       required: true,
       validator(store) {
         if (!store.dispatch && !store.subscribe && !store.getState) {
-          throw new Error('[vue-reactivesearch] - store provided is not a valid redux store');
+          throw new Error('[reactivesearch-vue] - store provided is not a valid redux store');
         }
         return true;
       },

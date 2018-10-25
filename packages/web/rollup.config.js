@@ -16,24 +16,24 @@ let output;
 
 if (es) {
   output = {
-    file: 'dist/@appbaseio/vue-reactivesearch.es.js',
+    file: 'dist/@appbaseio/reactivesearch-vue.es.js',
     format: 'es',
   };
 } else if (umd) {
   if (minify) {
     output = {
-      file: 'dist/@appbaseio/vue-reactivesearch.umd.min.js',
+      file: 'dist/@appbaseio/reactivesearch-vue.umd.min.js',
       format: 'umd',
     };
   } else {
     output = {
-      file: 'dist/@appbaseio/vue-reactivesearch.umd.js',
+      file: 'dist/@appbaseio/reactivesearch-vue.umd.js',
       format: 'umd',
     };
   }
 } else if (cjs) {
   output = {
-    file: 'dist/@appbaseio/vue-reactivesearch.cjs.js',
+    file: 'dist/@appbaseio/reactivesearch-vue.cjs.js',
     format: 'cjs',
   };
 } else if (format) {
@@ -46,7 +46,7 @@ export default {
   input: 'src/index.js',
   output: Object.assign(
     {
-      name: umd ? 'VueReactiveSearch' : '@appbaseio/vue-reactivesearch',
+      name: umd ? 'ReactiveSearchVue' : '@appbaseio/reactivesearch-vue',
     },
     output,
   ),
