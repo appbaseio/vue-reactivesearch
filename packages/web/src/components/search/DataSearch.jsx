@@ -46,13 +46,16 @@ const DataSearch = {
         this.updateQueryHandler(this.$props.componentId, value, this.$props);
       }
     }, this.$props.debounce);
-    this.setQueryListener(this.$props.componentId, this.$props.onQueryChange, null);
+    const onQueryChange = (...args) => {
+      this.$emit('queryChange', ...args);
+    };
+    this.setQueryListener(this.$props.componentId, onQueryChange, null);
   },
   props: {
     options: types.options,
     autoFocus: types.bool,
-    autosuggest: VueTypes.bool.def(false),
-    beforeValueChange: types.func, // add event handler
+    // autosuggest: VueTypes.bool.def(false),
+    beforeValueChange: types.func,
     className: VueTypes.string.def(''),
     clearIcon: types.children,
     componentId: types.stringRequired,
@@ -61,7 +64,7 @@ const DataSearch = {
     dataField: types.dataFieldArray,
     debounce: VueTypes.number.def(0),
     defaultSelected: types.string,
-    defaultSuggestions: types.suggestions,
+    // defaultSuggestions: types.suggestions,
     fieldWeights: types.fieldWeights,
     filterLabel: types.string,
     fuzziness: types.fuzziness,
@@ -71,19 +74,17 @@ const DataSearch = {
     iconPosition: VueTypes.oneOf(['left', 'right']).def('left'),
     innerClass: types.style,
     innerRef: types.func,
-    onBlur: types.func, // add event handler
-    onFocus: types.func, // add event handler
-    onKeyDown: types.func, // add event handler
-    onKeyPress: types.func, // add event handler
-    onKeyUp: types.func, // add event handler
-    onQueryChange: types.func, // add event handler
-    onSuggestion: types.func, // add event handler
-    onValueChange: types.func, // add event handler
-    onValueSelected: types.func, // add event handler
+    // onBlur: types.func, // add event handler
+    // onFocus: types.func, // add event handler
+    // onKeyDown: types.func, // add event handler
+    // onKeyPress: types.func, // add event handler
+    // onKeyUp: types.func, // add event handler
+    // onSuggestion: types.func, // add event handler
+    // onValueSelected: types.func, // add event handler
     placeholder: VueTypes.string.def('Search'),
     queryFormat: VueTypes.oneOf(['and', 'or']).def('or'),
     react: types.react,
-    renderSuggestions: types.func,
+    // renderSuggestions: types.func,
     showClear: VueTypes.bool.def(false),
     showFilter: VueTypes.bool.def(true),
     showIcon: VueTypes.bool.def(true),
@@ -220,7 +221,7 @@ const DataSearch = {
         }
 
         this.locked = false;
-        if (props.onValueChange) props.onValueChange(value);
+        this.$emit('valueChange', value);
       };
 
       checkValueChange(props.componentId, value, props.beforeValueChange, performUpdate);
