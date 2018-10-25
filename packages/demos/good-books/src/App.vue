@@ -33,7 +33,7 @@
         :pagination="true"
         :from="0"
         :size="5"
-        :react="{and: ['BookSensor','Authors']}"
+        :react="{and: ['Ratings','Authors']}"
       >
         <div slot="onData" slot-scope="{ item }">
           <div class="flex book-content" key="item._id">
