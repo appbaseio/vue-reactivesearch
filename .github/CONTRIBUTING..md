@@ -1,6 +1,6 @@
 # ReactiveSearch Contribution Guide 🔍
 
-Welcome to the contribution guide! We welcome all contributions. A list of issues is present [here](https://github.com/appbaseio/vue-reactivesearch/issues). If you're interested in picking up something, feel free to start a discussion 😺
+Welcome to the contribution guide! We welcome all contributions. A list of issues is present [here](https://github.com/appbaseio/reactivesearch-vue/issues). If you're interested in picking up something, feel free to start a discussion 😺
 
 The reactivesearch monorepo contains the code for [web](../packages/web) library. Which uses a common [core](https://github.com/appbaseio/reactivecore/) architecture. Project specific readme files are available inside each package.
 
@@ -34,7 +34,7 @@ yarn
 
 ## Web
 
-1. You can run the following command from `vue-reactivesearch` root which will start the babel watchers inside `/reactivecore` and `/web`. This will let you make changes to these projects on the fly and the files will be transpiled and updated instantly:
+1. You can run the following command from `reactivesearch-vue` root which will start the babel watchers inside `/reactivecore` and `/web`. This will let you make changes to these projects on the fly and the files will be transpiled and updated instantly:
 
 ```bash
 yarn dev:web

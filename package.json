@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "vue-reactivesearch-packages",
+  "name": "reactivesearch-vue-packages",
   "scripts": {
     "dev:web": "concurrently --kill-others -n \"CORE\",\"WEB\", -c \"cyan\",\"yellow\",\"green\", \"npm start --prefix packages/reactivecore\" \"npm run watch --prefix packages/web\"",
     "lint": "eslint .",

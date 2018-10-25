@@ -1,9 +1,9 @@
 {
-  "name": "@appbaseio/vue-reactivesearch",
-  "version": "1.0.0-alpha.2",
-  "main": "dist/@appbaseio/vue-reactivesearch.cjs.js",
-  "jsnext:main": "dist/@appbaseio/vue-reactivesearch.es.js",
-  "module": "dist/@appbaseio/vue-reactivesearch.es.js",
+  "name": "@appbaseio/reactivesearch-vue",
+  "version": "1.0.0-alpha",
+  "main": "dist/@appbaseio/reactivesearch-vue.cjs.js",
+  "jsnext:main": "dist/@appbaseio/reactivesearch-vue.es.js",
+  "module": "dist/@appbaseio/reactivesearch-vue.es.js",
   "description": "A Vue UI components library for building search experiences",
   "keywords": [
     "appbase",
