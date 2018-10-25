@@ -1,4 +1,3 @@
-// import Downshift from 'downshift';
 import {
   Actions,
   helper,
@@ -24,10 +23,7 @@ const {
   setQueryListener,
 } = Actions;
 const {
-  debounce,
-  pushToAndClause,
-  checkValueChange,
-  getClassName,
+ debounce, pushToAndClause, checkValueChange, getClassName,
 } = helper;
 
 const DataSearch = {
@@ -44,12 +40,12 @@ const DataSearch = {
   },
   created() {
     this.handleTextChange = debounce((value) => {
-        if (this.$props.autosuggest) {
-          this.updateQueryHandler(this.internalComponent, value, this.$props);
-        } else {
-          this.updateQueryHandler(this.$props.componentId, value, this.$props);
-        }
-      }, this.$props.debounce);
+      if (this.$props.autosuggest) {
+        this.updateQueryHandler(this.internalComponent, value, this.$props);
+      } else {
+        this.updateQueryHandler(this.$props.componentId, value, this.$props);
+      }
+    }, this.$props.debounce);
     this.setQueryListener(this.$props.componentId, this.$props.onQueryChange, null);
   },
   props: {
@@ -72,10 +68,7 @@ const DataSearch = {
     highlight: types.bool,
     highlightField: types.stringOrArray,
     icon: types.children,
-    iconPosition: VueTypes.oneOf([
-      'left',
-      'right',
-    ]).def('left'),
+    iconPosition: VueTypes.oneOf(['left', 'right']).def('left'),
     innerClass: types.style,
     innerRef: types.func,
     onBlur: types.func, // add event handler
@@ -88,10 +81,7 @@ const DataSearch = {
     onValueChange: types.func, // add event handler
     onValueSelected: types.func, // add event handler
     placeholder: VueTypes.string.def('Search'),
-    queryFormat: VueTypes.oneOf([
-      'and',
-      'or',
-    ]).def('or'),
+    queryFormat: VueTypes.oneOf(['and', 'or']).def('or'),
     react: types.react,
     renderSuggestions: types.func,
     showClear: VueTypes.bool.def(false),
@@ -208,29 +198,29 @@ const DataSearch = {
       const performUpdate = () => {
         this.currentValue = value;
         this.suggestions = [];
-            if (isDefaultValue) {
-              if (this.$props.autosuggest) {
-                this.isOpen = false;
-                this.updateQueryHandler(this.internalComponent, value, props);
-              } // in case of strict selection only SUGGESTION_SELECT should be able
-              // to set the query otherwise the value should reset
+        if (isDefaultValue) {
+          if (this.$props.autosuggest) {
+            this.isOpen = false;
+            this.updateQueryHandler(this.internalComponent, value, props);
+          } // in case of strict selection only SUGGESTION_SELECT should be able
+          // to set the query otherwise the value should reset
 
-              if (props.strictSelection) {
-                if (cause === causes.SUGGESTION_SELECT || value === '') {
-                  this.updateQueryHandler(props.componentId, value, props);
-                } else {
-                  this.setValue('', true);
-                }
-              } else {
-                this.updateQueryHandler(props.componentId, value, props);
-              }
+          if (props.strictSelection) {
+            if (cause === causes.SUGGESTION_SELECT || value === '') {
+              this.updateQueryHandler(props.componentId, value, props);
             } else {
-              // debounce for handling text while typing
-              this.handleTextChange(value);
+              this.setValue('', true);
             }
+          } else {
+            this.updateQueryHandler(props.componentId, value, props);
+          }
+        } else {
+          // debounce for handling text while typing
+          this.handleTextChange(value);
+        }
 
-            this.locked = false;
-            if (props.onValueChange) props.onValueChange(value);
+        this.locked = false;
+        if (props.onValueChange) props.onValueChange(value);
       };
 
       checkValueChange(props.componentId, value, props.beforeValueChange, performUpdate);
@@ -344,8 +334,8 @@ const DataSearch = {
     renderIcons() {
       return (
         <div>
-          {this.$data.currentValue &&
-            this.$props.showClear && (
+          {this.$data.currentValue
+            && this.$props.showClear && (
               <InputIcon
                 onClick={this.clearValue}
                 iconPosition="right"
@@ -371,11 +361,11 @@ const DataSearch = {
     //   suggestionsList = this.suggestions;
     // }
 
-   // const { theme, renderSuggestions } = this.$props;
+    // const { theme, renderSuggestions } = this.$props;
     return (
       <Container class={this.$props.className}>
         {this.$props.title && (
-          <Title class={getClassName(this.$props.innerClass, 'title') || null}>
+          <Title class={getClassName(this.$props.innerClass, 'title') || ''}>
             {this.$props.title}
           </Title>
         )}
@@ -508,12 +498,13 @@ DataSearch.defaultQuery = (value, props) => {
   return finalQuery;
 };
 DataSearch.shouldQuery = (value, dataFields, props) => {
-  const fields = dataFields.map((field, index) =>
-    `${field}${
-      Array.isArray(props.fieldWeights) && props.fieldWeights[index]
-        ? `^${props.fieldWeights[index]}`
-        : ''
-    }`);
+  const fields = dataFields.map(
+    (field, index) => `${field}${
+        Array.isArray(props.fieldWeights) && props.fieldWeights[index]
+          ? `^${props.fieldWeights[index]}`
+          : ''
+      }`,
+  );
 
   if (props.queryFormat === 'and') {
     return [
@@ -559,8 +550,8 @@ DataSearch.shouldQuery = (value, dataFields, props) => {
 
 const mapStateToProps = (state, props) => ({
   selectedValue:
-    (state.selectedValues[props.componentId] && state.selectedValues[props.componentId].value) ||
-    null,
+    (state.selectedValues[props.componentId] && state.selectedValues[props.componentId].value)
+    || null,
   suggestions: state.hits[props.componentId] && state.hits[props.componentId].hits,
   themePreset: state.config.themePreset,
 });
