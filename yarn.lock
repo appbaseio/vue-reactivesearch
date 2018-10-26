@@ -2,6 +2,15 @@
 # yarn lockfile v1
 
 
+"@appbaseio/reactivecore@^6.0.2":
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/@appbaseio/reactivecore/-/reactivecore-6.0.2.tgz#6b61991bf4ccd3cb045b8328a6c2f06551574bea"
+  dependencies:
+    prop-types "^15.6.0"
+    redux "^4.0.0"
+    redux-thunk "^2.3.0"
+    vue-types "^1.3.3"
+
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.0.0-beta.35", "@babel/code-frame@^7.0.0-beta.47":
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.0.0.tgz#06e2ab19bdb535385559aabb5ba59729482800f8"
