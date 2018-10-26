@@ -143,8 +143,12 @@ const SingleList = {
                 value={selectAllLabel}
                 onClick={this.handleClick}
                 readOnly
-                checked={this.$data.currentValue === selectAllLabel}
                 show={this.$props.showRadio}
+                {...{
+                  domProps: {
+                    checked: this.$data.currentValue === selectAllLabel,
+                  },
+                }}
               />
               <label
                 class={getClassName(this.$props.innerClass, 'label') || null}
@@ -181,8 +185,12 @@ const SingleList = {
                   readOnly
                   onClick={this.handleClick}
                   type="radio"
-                  checked={this.$data.currentValue === String(item.key)}
                   show={this.$props.showRadio}
+                  {...{
+                    domProps: {
+                      checked: this.$data.currentValue === String(item.key),
+                    },
+                  }}
                 />
                 <label
                   class={getClassName(this.$props.innerClass, 'label') || null}

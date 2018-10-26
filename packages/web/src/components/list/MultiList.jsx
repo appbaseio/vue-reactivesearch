@@ -128,6 +128,7 @@ const MultiList = {
   },
   render() {
     const { selectAllLabel, renderListItem } = this.$props;
+
     const renderListItemCalc = this.$scopedSlots.renderListItem || renderListItem;
     if (this.modifiedOptions.length === 0) {
       return null;
@@ -147,10 +148,7 @@ const MultiList = {
         {this.renderSearch()}
         <UL class={getClassName(this.$props.innerClass, 'list')}>
           {selectAllLabel ? (
-            <li
-              key={selectAllLabel}
-              class={`${this.$data.currentValue[selectAllLabel] ? 'active' : ''}`}
-            >
+            <li key={selectAllLabel} class={`${this.currentValue[selectAllLabel] ? 'active' : ''}`}>
               <Checkbox
                 type="checkbox"
                 class={getClassName(this.$props.innerClass, 'checkbox')}
@@ -158,7 +156,11 @@ const MultiList = {
                 name={selectAllLabel}
                 value={selectAllLabel}
                 onClick={this.handleClick}
-                checked={!!this.$data.currentValue[selectAllLabel]}
+                {...{
+                  domProps: {
+                    checked: !!this.currentValue[selectAllLabel],
+                  },
+                }}
                 show={this.$props.showCheckbox}
               />
               <label
@@ -192,8 +194,12 @@ const MultiList = {
                   name={this.$props.componentId}
                   value={item.key}
                   onClick={this.handleClick}
-                  checked={!!this.$data.currentValue[item.key]}
                   show={this.$props.showCheckbox}
+                  {...{
+                    domProps: {
+                      checked: !!this.$data.currentValue[item.key],
+                    },
+                  }}
                 />
                 <label
                   class={getClassName(this.$props.innerClass, 'label')}
@@ -243,9 +249,9 @@ const MultiList = {
       let { currentValue } = this.$data;
       let finalValues = null;
       if (
-        selectAllLabel
-        && ((Array.isArray(value) && value.includes(selectAllLabel))
-          || (typeof value === 'string' && value === selectAllLabel))
+        selectAllLabel &&
+        ((Array.isArray(value) && value.includes(selectAllLabel)) ||
+          (typeof value === 'string' && value === selectAllLabel))
       ) {
         if (currentValue[selectAllLabel]) {
           currentValue = {};
@@ -456,8 +462,8 @@ MultiList.generateQueryOptions = (props) => {
 const mapStateToProps = (state, props) => ({
   options: state.aggregations[props.componentId],
   selectedValue:
-    (state.selectedValues[props.componentId] && state.selectedValues[props.componentId].value)
-    || null,
+    (state.selectedValues[props.componentId] && state.selectedValues[props.componentId].value) ||
+    null,
   themePreset: state.config.themePreset,
 });
 
