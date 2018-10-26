@@ -74,11 +74,6 @@ const DataSearch = {
     iconPosition: VueTypes.oneOf(['left', 'right']).def('left'),
     innerClass: types.style,
     innerRef: types.func,
-    // onBlur: types.func, // add event handler
-    // onFocus: types.func, // add event handler
-    // onKeyDown: types.func, // add event handler
-    // onKeyPress: types.func, // add event handler
-    // onKeyUp: types.func, // add event handler
     // onSuggestion: types.func, // add event handler
     // onValueSelected: types.func, // add event handler
     placeholder: VueTypes.string.def('Search'),
@@ -451,13 +446,31 @@ const DataSearch = {
               class={getClassName(this.$props.innerClass, 'input') || ''}
               placeholder={this.$props.placeholder}
               value={this.$data.currentValue ? this.$data.currentValue : ''}
-              onChange={this.onInputChange}
-              onblur={this.$props.onBlur}
-              onfocus={this.$props.onFocus}
-              onkeyPress={this.$props.onKeyPress}
-              onkeyDown={this.$props.onKeyDown}
-              onkeyUp={this.$props.onKeyUp}
-              autoFocus={this.$props.autoFocus}
+              {...{
+                on: {
+                  blur: (e) => {
+                    this.$emit('blur', e);
+                  },
+                  keypress: (e) => {
+                    this.$emit('keyPress', e);
+                  },
+                  change: this.onInputChange,
+                  focus: (e) => {
+                    this.$emit('focus', e);
+                  },
+                  keydown: (e) => {
+                    this.$emit('keyDown', e);
+                  },
+                  keyup: (e) => {
+                    this.$emit('keyUp', e);
+                  },
+                },
+              }}
+              {...{
+                domProps: {
+                  autofocus: this.$props.autoFocus,
+                },
+              }}
               iconPosition={this.$props.iconPosition}
               showIcon={this.$props.showIcon}
               showClear={this.$props.showClear}
@@ -547,6 +560,32 @@ DataSearch.shouldQuery = (value, dataFields, props) => {
       },
     },
   ];
+};
+DataSearch.highlightQuery = (props) => {
+  if (props.customHighlight) {
+    return props.customHighlight(props);
+  }
+  if (!props.highlight) {
+    return null;
+  }
+  const fields = {};
+  const highlightField = props.highlightField ? props.highlightField : props.dataField;
+
+  if (typeof highlightField === 'string') {
+    fields[highlightField] = {};
+  } else if (Array.isArray(highlightField)) {
+    highlightField.forEach((item) => {
+      fields[item] = {};
+    });
+  }
+
+  return {
+    highlight: {
+      pre_tags: ['<mark>'],
+      post_tags: ['</mark>'],
+      fields,
+    },
+  };
 };
 
 const mapStateToProps = (state, props) => ({

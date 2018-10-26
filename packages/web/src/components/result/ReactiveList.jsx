@@ -66,6 +66,7 @@ const ReactiveList = {
     loader: types.title,
     onAllData: types.func,
     onData: types.func,
+    onResultStats: types.func,
     onNoResults: VueTypes.string.def('No Results found.'),
     pages: VueTypes.number.def(5),
     pagination: VueTypes.bool.def(false),
@@ -297,7 +298,7 @@ const ReactiveList = {
     }
     return (
       <div style={this.$props.style} class={this.$props.className}>
-        {this.isLoading && this.$props.pagination && this.$props.loader}
+        {this.isLoading && this.$props.pagination && (this.$scopedSlots.loader || this.$props.loader)}
         <Flex
           labelPosition={this.$props.sortOptions ? 'right' : 'left'}
           class={getClassName(this.$props.innerClass, 'resultsInfo')}
@@ -322,7 +323,7 @@ const ReactiveList = {
             results,
             streamResults,
             loadMore: this.loadMore,
-            extra: {
+            analytics: {
               base: this.$currentPage * size,
               triggerClickAnalytics: this.triggerClickAnalytics,
             },
@@ -457,8 +458,12 @@ const ReactiveList = {
     },
 
     renderResultStats() {
-      if (this.hasResultStatsListener && this.$data.total) {
-        return this.$emit('resultStats', this.$data.total, this.$data.time);
+      const onResultStats = this.$props.onResultStats || this.$scopedSlots.onResultStats;
+      if (onResultStats) {
+        return onResultStats({
+          total: this.$data.total,
+          time: this.$data.time,
+        });
       }
       if (this.$data.total) {
         return (
